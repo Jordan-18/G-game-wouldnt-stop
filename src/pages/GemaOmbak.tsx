@@ -1,4 +1,4 @@
-import React, { useRef, useEffect } from 'react';
+import React, { useRef, useEffect, useState, useCallback } from 'react';
 import { Player, Obstacle, Crew } from '../services/GemaOmbak';
 import { getRandomInt } from '../utils/Helper';
 import '../styles/GemaOmbak.css';
@@ -26,6 +26,10 @@ const GemaOmbak: React.FC = () => {
   const seaLayerRef  = useRef<HTMLDivElement>(null);
   const cloudLayerRef = useRef<HTMLDivElement>(null);
   const beachBg = useRef<HTMLDivElement>(null);
+
+  const [seaPosition, setSeaPosition] = useState(0);
+  const [cloudPosition, setCloudPosition] = useState(0);
+  const animationFrameRef = useRef<number>();
 
   const spawnObstacle = () => {
     if (canvasRef.current) {
@@ -69,7 +73,7 @@ const GemaOmbak: React.FC = () => {
       const canvas = canvasRef.current;
       const ctx = canvas?.getContext('2d');
 
-      updateParallaxSpeed()
+      // updateParallaxSpeed()
 
       if (ctx) {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -163,6 +167,24 @@ const GemaOmbak: React.FC = () => {
       cloudLayerRef.current.style.animationDuration = `${10 - cloudSpeed}s`;
     }
   }
+  const updateParallaxPosition = useCallback(() => {
+    const seaSpeed = gameSpeed * 0.5;
+    const cloudSpeed = gameSpeed * 0.3;
+
+    setSeaPosition(prev => {
+      let newPos = prev - seaSpeed;
+      if (newPos <= -50) newPos = 0; // Reset when reaching -50%
+      return newPos;
+    });
+
+    setCloudPosition(prev => {
+      let newPos = (prev) - cloudSpeed;
+      if (newPos <= -50) newPos = 0; // Reset when reaching -50%
+      return newPos;
+    });
+
+    animationFrameRef.current = requestAnimationFrame(updateParallaxPosition);
+}, [gameSpeed]);
 
   useEffect(() => {
     if (canvasRef.current) {
@@ -228,13 +250,36 @@ const GemaOmbak: React.FC = () => {
     }
   }, []);
 
+  useEffect(() => {
+    animationFrameRef.current = requestAnimationFrame(updateParallaxPosition);
+    return () => {
+        if (animationFrameRef.current) {
+            cancelAnimationFrame(animationFrameRef.current);
+        }
+    };
+  }, [updateParallaxPosition]);
+
   return (
     <>
 
       <div className="parallax">
-        <div ref={seaLayerRef} className="parallax-layer sea"></div>
+        {/* <div ref={seaLayerRef} className="parallax-layer sea"></div>
         <div ref={cloudLayerRef} className="parallax-layer cloud"></div>
-        {/* <div className="parallax-layer beach"></div> */}
+        <div className="parallax-layer beach"></div> */}
+        <div 
+            className="parallax-layer sea" 
+            style={{ 
+                transform: `translate3d(${seaPosition}%, 0, 0)`,
+                transition: 'transform linear'
+            }}
+        />
+        <div 
+            className="parallax-layer cloud" 
+            style={{ 
+                transform: `translate3d(${cloudPosition}%, 0, 0)`,
+                transition: 'transform linear'
+            }}
+        />
 
         <canvas ref={canvasRef} id="gameCanvas"></canvas>
       </div>

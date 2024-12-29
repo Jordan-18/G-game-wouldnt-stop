@@ -55,6 +55,8 @@ body {
     z-index: 0;
     animation-timing-function: linear !important;
     animation-iteration-count: infinite !important;
+    transform: translate3d(0, 0, 0); 
+    will-change: transform;
 }
 
 .parallax-layer.sea {
@@ -79,10 +81,10 @@ body {
 
 @keyframes parallax-scroll {
     from {
-        transform: translateX(0);
+        transform: translateX(0, 0, 0);
     }
     to {
-        transform: translateX(-50%);
+        transform: translateX(-50%, 0, 0);
     }
 }
 
