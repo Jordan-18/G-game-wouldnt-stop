@@ -2,9 +2,6 @@ import React, { useRef, useEffect } from 'react';
 import { Player, Obstacle, Crew } from '../services/GemaOmbak';
 import { getRandomInt } from '../utils/Helper';
 import '../styles/GemaOmbak.css';
-// import seaBackgroud from '../assets/bg-parallax/1.sea.png'
-// import cloudBackgroud from '../assets/bg-parallax/2.cloud.png'
-// import beachBackgroud from '../assets/bg-parallax/3.beach.png'
 
 const GemaOmbak: React.FC = () => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -26,15 +23,9 @@ const GemaOmbak: React.FC = () => {
   let isCollected: boolean = false;
   let lastSpeedCheck: number = 0;
 
-  // const parallaxLayer = [
-  //   { image: new Image(), speed: 0.5, x: 0, y:0},
-  //   { image: new Image(), speed: 0.3, x: 0, y:0},
-  //   { image: new Image(), speed: 0.1, x: 0, y:0},
-  // ]
-
-  const seaBg = useRef<HTMLImageElement>(null);
-  const cloudBg = useRef<HTMLImageElement>(null);
-  const beachBg = useRef<HTMLImageElement>(null);
+  const seaLayerRef  = useRef<HTMLDivElement>(null);
+  const cloudLayerRef = useRef<HTMLDivElement>(null);
+  const beachBg = useRef<HTMLDivElement>(null);
 
   const spawnObstacle = () => {
     if (canvasRef.current) {
@@ -78,7 +69,7 @@ const GemaOmbak: React.FC = () => {
       const canvas = canvasRef.current;
       const ctx = canvas?.getContext('2d');
 
-      // drawParallax(canvas,ctx as CanvasRenderingContext2D);
+      updateParallaxSpeed()
 
       if (ctx) {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -117,7 +108,7 @@ const GemaOmbak: React.FC = () => {
         if (roundedScore % 100 === 0 && roundedScore !== lastSpeedCheck && gameSpeed < 45) {
           gameSpeed += 1; // Tingkatkan gameSpeed
           lastSpeedCheck = roundedScore; // Update skor terakhir yang memicu peningkatan
-          console.log(`Game speed increased to ${gameSpeed}`);
+          // console.log(`Game speed increased to ${gameSpeed}`);
         }
       }
     }
@@ -162,20 +153,16 @@ const GemaOmbak: React.FC = () => {
   const isCollision = (obj1: { x: number, y: number, width: number, height: number }, obj2: { x: number, y: number, width: number, height: number }) => {
     return !(obj1.x + obj1.width < obj2.x || obj1.x > obj2.x + obj2.width || obj1.y + obj1.height < obj2.y || obj1.y > obj2.y + obj2.height);
   };
-  // const drawParallax = (canvas: HTMLCanvasElement ,ctx: CanvasRenderingContext2D) => {
-  //   if(ctx){
-  //     parallaxLayer.forEach((layer) => {
-  //       if (layer.image.complete){          
-  //         ctx.drawImage(layer.image, layer.x, layer.y, canvas.width, canvas.height);
-  //         ctx.drawImage(layer.image, layer.x + canvas.width, layer.y, canvas.width, canvas.height);
-  //         layer.x -= layer.speed * gameSpeed;
-  //         if(layer.x <= -canvas.width){
-  //           layer.x = 0
-  //         }
-  //       }
-  //     });
-  //   }
-  // }
+  const updateParallaxSpeed = () => {
+    if(seaLayerRef.current && cloudLayerRef.current){
+      // Adjust these multipliers to get desired relative speeds
+      const seaSpeed = gameSpeed * 0.3;
+      const cloudSpeed = gameSpeed * 0.3;
+
+      seaLayerRef.current.style.animationDuration = `${15 - seaSpeed}s`;
+      cloudLayerRef.current.style.animationDuration = `${10 - cloudSpeed}s`;
+    }
+  }
 
   useEffect(() => {
     if (canvasRef.current) {
@@ -185,9 +172,6 @@ const GemaOmbak: React.FC = () => {
       canvas.style.width = window.innerWidth + "px";
       canvas.style.height = window.innerHeight + "px";
 
-      // parallaxLayer[0].image.src = seaBackgroud; 
-      // parallaxLayer[1].image.src = cloudBackgroud;
-      // parallaxLayer[2].image.src = beachBackgroud;
 
       const groundLevel = canvas.height * heigtcanvas;
       playersRef.current = [new Player(canvasRef.current.width, canvasRef.current.height, groundLevel)];
@@ -248,8 +232,8 @@ const GemaOmbak: React.FC = () => {
     <>
 
       <div className="parallax">
-        <div className="parallax-layer sea"></div>
-        <div className="parallax-layer cloud"></div>
+        <div ref={seaLayerRef} className="parallax-layer sea"></div>
+        <div ref={cloudLayerRef} className="parallax-layer cloud"></div>
         {/* <div className="parallax-layer beach"></div> */}
 
         <canvas ref={canvasRef} id="gameCanvas"></canvas>
