@@ -1,0 +1,137 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+  
+body {
+    font-family: Arial, sans-serif;
+    height: 100vh;
+    background-color: #00ff04 !important;
+}
+
+strong{
+    color: #ffffff !important;
+}
+
+@font-face {
+    font-family: 'neuropolitical rg';
+    src: url('../assets/font/neuropolitical\ rg.otf') format('opentype');
+}
+
+@font-face {
+    font-family: 'good timing bd';
+    src: url('../assets/font/good\ timing\ bd.otf');
+}
+
+#root {
+    height: 100vh !important; /* Ensure full viewport height */
+}
+
+.app {
+    display: flex;
+    flex-direction: row; 
+}
+body {
+    /* display: flex; */
+    font-family: Arial, sans-serif;
+    height: 100vh;
+}
+
+.sidebar {
+    width: 20%;
+    display: flex;
+    flex-direction: column;
+    align-items: end;
+    padding-top: 15% !important;
+}
+
+.menu-button {
+    width: 150px;
+    padding: 5px;
+    margin: 10px 0;
+    background-image: linear-gradient(#54bbd7, #e75ed2);
+    border: none;
+    border-radius: 8px;
+    font-size: 25px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    position: relative;
+    left: 30%;
+    box-shadow: 0 8px 0 #662a5d;
+    line-height: 1.1;
+    font-weight: bold;
+    color: #ffffff;
+    font-family: 'neuropolitical rg';
+}
+
+.menu-button:active {
+    transform: translateY(5px);
+    box-shadow: 0 3px 0 #662a5d;
+}
+
+.menu-button:hover {
+    background-color: #ffffff; /* Warna saat tombol di-hover */
+}
+
+.content {
+    width: 100%;
+    background-color: #ffffff00;
+}
+
+.content .title {
+    float: right;
+    font-size: 60pt;
+    color: #ffffff;
+    margin: 8% 8% 0% 0%;
+    font-family: 'good timing bd';
+}
+
+.content .sub-title {
+    float: right !important;
+    font-size: 40pt !important;
+    color: #ffffff;
+    margin: 0% 0% 0% 45%;
+    font-family: 'good timing bd';
+}
+
+/* smartphones, iPhone, portrait 480x320 phones */ 
+@media (min-width:320px)  { 
+    .sidebar {
+        padding-top: 6%;
+    }
+}
+/* portrait e-readers (Nook/Kindle), smaller tablets @ 600 or @ 640 wide. */ 
+@media (min-width:481px) and ( max-height:800px)  {}
+
+/* portrait tablets, portrait iPad, landscape e-readers, landscape 800x480 or 854x480 phones */ 
+@media (min-width:641px)  { }
+
+/* tablet, landscape iPad, lo-res laptops ands desktops */ 
+@media (min-width:961px)  { }
+
+/* big landscape tablets, laptops, and desktops */ 
+@media (min-width:1025px) { 
+    .content .sub-title {
+        font-size: 60pt !important;
+        color: #ffffff;
+        margin: 0% 0% 0% 45%;
+    }
+    .sidebar {
+        padding-top: 15% !important;
+    }
+    .menu-button {
+        width: 250px;
+        margin: 20px 0;
+        padding: 20px;
+    }
+
+    .content .title {
+        font-size: 100px;
+    }
+}
+
+/* hi-res laptops and desktops */ 
+@media (min-width:1281px) { 
+
+}

@@ -1,0 +1,51 @@
+#layer{
+    width: 100%;
+    height: 100vh;
+    background-color: #0000008e !important;
+    background-image: linear-gradient(#000000a1, #e75ed200);
+}
+
+.sidebar-setting {
+    width: 20% !important;
+    display: flex;
+    flex-direction: column;
+    align-items: start;
+    padding-top: 30px;
+    align-items: center !important;
+}
+
+.setting-button {
+    background-color: #ffffff00;
+    height: 30px;
+    width: 150px;
+    padding: auto;
+    color: #ffffff;
+    margin-top: 20px;
+    font-weight: bold;
+    font-size: 24px;
+    font-family: 'neuropolitical rg';
+    border: none;
+}
+
+.setting-button:hover {
+    color: rgb(93, 93, 93);
+    cursor: pointer;
+}
+
+.content-setting {
+    width: 80% !important;
+    flex: 1 1 auto;
+}
+
+.selected-button {
+    text-decoration: underline;
+    text-decoration-color: white;
+}
+
+/* big landscape tablets, laptops, and desktops */ 
+@media (min-width:1025px) { 
+    .setting-button {
+        font-size: 40px !important;
+        margin-top: 50px;
+    }
+}

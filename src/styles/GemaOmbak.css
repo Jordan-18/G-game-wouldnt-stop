@@ -1,0 +1,102 @@
+body {
+    font-family: Arial, sans-serif;
+    height: 100vh;
+    background-color: #00ff04 !important;
+}
+
+.label-score{
+    position: absolute;
+    top: 30px;
+    color: white;
+    font-weight: bold;
+    font-size: 20px;
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.7);
+    pointer-events: none;
+    -webkit-text-stroke: 0.6px black;
+    font-family: 'good timing bd';
+    left: 5%;
+}
+
+.label-crewscore{
+    position: absolute;
+    top: 15px;
+    color: white;
+    font-weight: bold;
+    font-size: 20px;
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.7);
+    pointer-events: none;
+    -webkit-text-stroke: 0.6px black;
+    font-family: 'good timing bd';
+    left: 5%;
+}
+
+.label-score strong, .label-crewscore strong {
+    margin-left: 15%;
+}
+
+
+/* start parallax setting */
+.parallax {
+    position: relative;
+    height: 100vh; /* Tinggi layar penuh */
+    overflow: hidden;
+}
+
+.parallax-layer {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background-size: cover;
+    background-repeat: repeat;
+    background-position: center;
+    z-index: 0;
+}
+
+.parallax-layer.sea {
+    background-image: url('../assets/bg-parallax/1.sea.png');
+    z-index: -3;
+    animation: parallax-scroll 20s linear infinite;
+}
+
+.parallax-layer.cloud {
+    background-image: url('../assets/bg-parallax/2.cloud.png');
+    z-index: -2;
+    animation: parallax-scroll 15s linear infinite;
+}
+
+.parallax-layer.beach {
+    background-image: url('../assets/bg-parallax/3.beach.png');
+    width: 100%;
+    height: 50%;
+    z-index: -1;
+    animation: parallax-scroll 10s linear infinite;
+}
+
+@keyframes parallax-scroll {
+    from {
+        transform: translateX(0);
+    }
+    to {
+        transform: translateX(-100%);
+    }
+}
+
+#game-canvas {
+    position: absolute;
+    z-index: 4; /* Pastikan canvas berada di atas layer parallax */
+}
+
+/* end parallax setting */
+
+/* big landscape tablets, laptops, and desktops */ 
+@media (min-width:1025px) { 
+    .label-score{
+        top: 10px;
+        font-size: 32px;
+    }
+
+    .label-crewscore{
+        top: 60px;
+        font-size: 32px;
+    }
+}
