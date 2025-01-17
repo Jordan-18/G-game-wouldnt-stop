@@ -22,14 +22,11 @@ const GemaOmbak: React.FC = () => {
   const crewRef = useRef<Crew[]>([]);
   let isCollected: boolean = false;
   let lastSpeedCheck: number = 0;
+  const activeKeys = useRef(new Set());
 
   const seaLayerRef  = useRef<HTMLDivElement>(null);
   const cloudLayerRef = useRef<HTMLDivElement>(null);
-  const beachBg = useRef<HTMLDivElement>(null);
-
-  const [seaPosition, setSeaPosition] = useState(0);
-  const [cloudPosition, setCloudPosition] = useState(0);
-  const animationFrameRef = useRef<number>();
+  const beachLayerRef = useRef<HTMLDivElement>(null);
 
   const spawnObstacle = () => {
     if (canvasRef.current) {
@@ -73,7 +70,7 @@ const GemaOmbak: React.FC = () => {
       const canvas = canvasRef.current;
       const ctx = canvas?.getContext('2d');
 
-      // updateParallaxSpeed()
+      updateParallaxSpeed()
 
       if (ctx) {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -158,33 +155,17 @@ const GemaOmbak: React.FC = () => {
     return !(obj1.x + obj1.width < obj2.x || obj1.x > obj2.x + obj2.width || obj1.y + obj1.height < obj2.y || obj1.y > obj2.y + obj2.height);
   };
   const updateParallaxSpeed = () => {
-    if(seaLayerRef.current && cloudLayerRef.current){
+    if(seaLayerRef.current && cloudLayerRef.current && beachLayerRef.current){//   
       // Adjust these multipliers to get desired relative speeds
       const seaSpeed = gameSpeed * 0.3;
       const cloudSpeed = gameSpeed * 0.3;
+      const beachSpeed = gameSpeed * 0.3;
 
       seaLayerRef.current.style.animationDuration = `${15 - seaSpeed}s`;
       cloudLayerRef.current.style.animationDuration = `${10 - cloudSpeed}s`;
+      beachLayerRef.current.style.animationDuration = `${10 - beachSpeed}s`;
     }
   }
-  const updateParallaxPosition = useCallback(() => {
-    const seaSpeed = gameSpeed * 0.5;
-    const cloudSpeed = gameSpeed * 0.3;
-
-    setSeaPosition(prev => {
-      let newPos = prev - seaSpeed;
-      if (newPos <= -50) newPos = 0; // Reset when reaching -50%
-      return newPos;
-    });
-
-    setCloudPosition(prev => {
-      let newPos = (prev) - cloudSpeed;
-      if (newPos <= -50) newPos = 0; // Reset when reaching -50%
-      return newPos;
-    });
-
-    animationFrameRef.current = requestAnimationFrame(updateParallaxPosition);
-}, [gameSpeed]);
 
   useEffect(() => {
     if (canvasRef.current) {
@@ -194,6 +175,15 @@ const GemaOmbak: React.FC = () => {
       canvas.style.width = window.innerWidth + "px";
       canvas.style.height = window.innerHeight + "px";
 
+      const resizeCanvas = () => {
+          if (canvasRef.current) {
+              const canvas = canvasRef.current;
+              canvas.width = window.innerWidth * window.devicePixelRatio;
+              canvas.height = window.innerHeight * window.devicePixelRatio;
+              canvas.style.width = window.innerWidth + "px";
+              canvas.style.height = window.innerHeight + "px";
+          }
+      };
 
       const groundLevel = canvas.height * heigtcanvas;
       playersRef.current = [new Player(canvasRef.current.width, canvasRef.current.height, groundLevel)];
@@ -202,6 +192,7 @@ const GemaOmbak: React.FC = () => {
       update();
       
       const handleKeyDown = (event: KeyboardEvent) => {
+        activeKeys.current.add(event.code);
         if (event.code === 'Space') {
           isSpacePressed = true; // Set true saat tombol Space ditekan.
           if (!holdTimer) {
@@ -226,6 +217,7 @@ const GemaOmbak: React.FC = () => {
       };
 
       const handleKeyUp = (event: KeyboardEvent) => {
+        activeKeys.current.delete(event.code);
         if (event.code === 'Space') {
           isSpacePressed = false; // Set false saat tombol Space dilepas.
           if (holdTimer) {
@@ -244,42 +236,21 @@ const GemaOmbak: React.FC = () => {
       const collisionInterval = setInterval(checkCollision, 100);
 
       return () => {
+        window.removeEventListener('resize', resizeCanvas)
         document.removeEventListener('keydown', handleKeyDown);
         clearInterval(collisionInterval);
       };
     }
   }, []);
 
-  useEffect(() => {
-    animationFrameRef.current = requestAnimationFrame(updateParallaxPosition);
-    return () => {
-        if (animationFrameRef.current) {
-            cancelAnimationFrame(animationFrameRef.current);
-        }
-    };
-  }, [updateParallaxPosition]);
-
   return (
     <>
 
       <div className="parallax">
-        {/* <div ref={seaLayerRef} className="parallax-layer sea"></div>
+        <div ref={seaLayerRef} className="parallax-layer sea"></div>
         <div ref={cloudLayerRef} className="parallax-layer cloud"></div>
-        <div className="parallax-layer beach"></div> */}
-        <div 
-            className="parallax-layer sea" 
-            style={{ 
-                transform: `translate3d(${seaPosition}%, 0, 0)`,
-                transition: 'transform linear'
-            }}
-        />
-        <div 
-            className="parallax-layer cloud" 
-            style={{ 
-                transform: `translate3d(${cloudPosition}%, 0, 0)`,
-                transition: 'transform linear'
-            }}
-        />
+        <div ref={beachLayerRef} className="parallax-layer beach"></div>
+
 
         <canvas ref={canvasRef} id="gameCanvas"></canvas>
       </div>

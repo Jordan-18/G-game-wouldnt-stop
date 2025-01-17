@@ -38,42 +38,41 @@ body {
 /* start parallax setting */
 .parallax {
     position: relative;
+    width: 100%;
     height: 100vh; /* Tinggi layar penuh */
     overflow: hidden;
 }
 
 .parallax-layer {
     position: absolute;
-    /* width: 100%; */
-    /* background-size: cover; */
-    /* background-position: center; */
     width: 200%;
     height: 100%;
     background-size: contain;
-    background-repeat: repeat;
+    background-repeat: repeat-x;
     background-position: 0 0;
     z-index: 0;
     animation-timing-function: linear !important;
     animation-iteration-count: infinite !important;
-    transform: translate3d(0, 0, 0); 
     will-change: transform;
 }
 
 .parallax-layer.sea {
-    background-image: url('../assets/bg-parallax/1.sea.png');
+    /* background-image: url('../assets/bg-parallax/1.sea.png'); */
+    background-image: url('../assets/bg-parallax/1.2.sea.png');
     z-index: -3;
     animation: parallax-scroll;
 }
 
 .parallax-layer.cloud {
-    background-image: url('../assets/bg-parallax/2.cloud.png');
+    /* background-image: url('../assets/bg-parallax/cloud-2.png'); */
     z-index: -2;
     animation: parallax-scroll;
 }
 
+
 .parallax-layer.beach {
-    background-image: url('../assets/bg-parallax/3.beach.png');
-    width: 100%;
+    /* background-image: url('../assets/bg-parallax/beach-2.png'); */
+    /* width: 100%; */
     height: 50%;
     z-index: -1;
     animation: parallax-scroll;
@@ -81,10 +80,10 @@ body {
 
 @keyframes parallax-scroll {
     from {
-        transform: translateX(0, 0, 0);
+        transform: translateX(0);
     }
     to {
-        transform: translateX(-50%, 0, 0);
+        transform: translateX(-50%);
     }
 }
 
