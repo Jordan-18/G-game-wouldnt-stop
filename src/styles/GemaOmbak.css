@@ -6,7 +6,7 @@ body {
 
 .label-score{
     position: absolute;
-    top: 30px;
+    top: 15px;
     color: white;
     font-weight: bold;
     font-size: 20px;
@@ -19,7 +19,7 @@ body {
 
 .label-crewscore{
     position: absolute;
-    top: 15px;
+    top: 30px;
     color: white;
     font-weight: bold;
     font-size: 20px;
@@ -38,58 +38,84 @@ body {
 /* start parallax setting */
 .parallax {
     position: relative;
-    width: 100%;
+    width: 100vw;
     height: 100vh; /* Tinggi layar penuh */
     overflow: hidden;
 }
 
 .parallax-layer {
     position: absolute;
-    width: 200%;
+    width: 100%;
     height: 100%;
-    background-size: contain;
-    background-repeat: repeat-x;
-    background-position: 0 0;
     z-index: 0;
-    animation-timing-function: linear !important;
-    animation-iteration-count: infinite !important;
+    pointer-events: none;
+}
+
+.image-container {
+    position: absolute;
+    width: 100% !important;
+    height: 100%;
+    /* background-size: contain; */
+    background-size: 100% 100%;
+    background-repeat: no-repeat;
+    background-position: 0 0;
+    animation: slide linear infinite;
     will-change: transform;
 }
 
-.parallax-layer.sea {
-    /* background-image: url('../assets/bg-parallax/1.sea.png'); */
+.parallax-layer .image-container:nth-child(2) {
+    left: 100%;
+    transform: scaleX(-1);
+}
+
+.sea .image-container {
     background-image: url('../assets/bg-parallax/1.2.sea.png');
-    z-index: -3;
-    animation: parallax-scroll;
+    z-index: 1;
+    animation-duration: 5s;
 }
 
-.parallax-layer.cloud {
-    /* background-image: url('../assets/bg-parallax/cloud-2.png'); */
-    z-index: -2;
-    animation: parallax-scroll;
+.cloud .image-container {
+    background-image: url('../assets/bg-parallax/2.cloud.png');
+    z-index: 2;
+    animation-duration: 3s;
 }
 
-
-.parallax-layer.beach {
-    /* background-image: url('../assets/bg-parallax/beach-2.png'); */
-    /* width: 100%; */
-    height: 50%;
-    z-index: -1;
-    animation: parallax-scroll;
+.beach .image-container {
+    background-image: url('../assets/bg-parallax/beach-2.png');
+    height: 20%;
+    z-index: 3;
+    animation-duration: 1s;
+    position: fixed; /* or absolute, depending on your needs */
+    bottom: 0;
+    left: 0;
+    width: 100%; /* ensure it spans the full width */
 }
 
-@keyframes parallax-scroll {
+canvas {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 10;  /* Memastikan canvas selalu berada di atas layer parallax */
+}
+
+@keyframes slide {
     from {
-        transform: translateX(0);
+      transform: translateX(0%);
     }
     to {
-        transform: translateX(-50%);
+      transform: translateX(-100%);
     }
 }
 
 #game-canvas {
     position: absolute;
-    z-index: 4; /* Pastikan canvas berada di atas layer parallax */
+    z-index: 4;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
 }
 
 /* end parallax setting */

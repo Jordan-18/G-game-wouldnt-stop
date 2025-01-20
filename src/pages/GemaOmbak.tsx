@@ -1,5 +1,5 @@
 import React, { useRef, useEffect, useState, useCallback } from 'react';
-import { Player, Obstacle, Crew } from '../services/GemaOmbak';
+import { Player, Obstacle, Crew, ParallaxBackground } from '../services/GemaOmbak'
 import { getRandomInt } from '../utils/Helper';
 import '../styles/GemaOmbak.css';
 
@@ -7,7 +7,7 @@ const GemaOmbak: React.FC = () => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const playersRef = useRef<Player[]>([]);
   const obstaclesRef = useRef<Obstacle[]>([]);
-  let gameSpeed: number = 5;
+  let gameSpeed: number = 2;
   const baseInterval: number = 5000; // Base interval in milliseconds
   const stageIncrement: number = 500; // Reduction in interval per stage
   const PRESS_HOLD_THRESHOLD = 500;
@@ -28,9 +28,11 @@ const GemaOmbak: React.FC = () => {
   const cloudLayerRef = useRef<HTMLDivElement>(null);
   const beachLayerRef = useRef<HTMLDivElement>(null);
 
+  const backgroundRef = useRef<ParallaxBackground | null>(null);
+
   const spawnObstacle = () => {
     if (canvasRef.current) {
-      let obstacle = new Obstacle(canvasRef.current.width, canvasRef.current.height, canvasRef.current.height * 0.9, gameSpeed);
+      let obstacle = new Obstacle(canvasRef.current.width, canvasRef.current.height, canvasRef.current.height, gameSpeed);
       // while (obstaclesRef.current.some((o) => isCollision(o, obstacle))) {
       //   obstacle = new Obstacle(canvasRef.current.width, canvasRef.current.height, canvasRef.current.height * 0.9, gameSpeed);
       // }
@@ -39,7 +41,7 @@ const GemaOmbak: React.FC = () => {
   };
   const spawnCrew = () => {
     if (canvasRef.current) {
-      let crew = new Crew(canvasRef.current.width, canvasRef.current.height, canvasRef.current.height * 0.9, gameSpeed);
+      let crew = new Crew(canvasRef.current.width, canvasRef.current.height, canvasRef.current.height, gameSpeed);
       // // Pastikan crew tidak tumpang tindih dengan obstacle
       // while (obstaclesRef.current.some((obstacle) => isCollision(obstacle, crew))) {
       //   crew = new Crew(canvasRef.current.width, canvasRef.current.height, canvasRef.current.height * 0.9, gameSpeed);
@@ -75,6 +77,11 @@ const GemaOmbak: React.FC = () => {
       if (ctx) {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
 
+        if (backgroundRef.current) {
+            backgroundRef.current.update(gameSpeed);
+            backgroundRef.current.draw(ctx);
+        }
+
         // player section
         playersRef.current.forEach((player) => {
           player.update(isSpacePressed, gameSpeed); // Berikan nilai isSpacePressed ke player.
@@ -93,7 +100,7 @@ const GemaOmbak: React.FC = () => {
 
         // crew section
         crewRef.current.forEach((crew) => {
-          crew.update(playersRef.current[0].x, playersRef.current[0].y);
+          crew.update(playersRef.current[0].x, playersRef.current[0].y, gameSpeed);
           crew.draw(ctx);
         });
 
@@ -106,7 +113,7 @@ const GemaOmbak: React.FC = () => {
         scoreRef.current!.textContent = score.toFixed(0).toString();
 
         const roundedScore = Math.floor(score);
-        if (roundedScore % 100 === 0 && roundedScore !== lastSpeedCheck && gameSpeed < 45) {
+        if (roundedScore % 100 === 0 && roundedScore !== lastSpeedCheck && gameSpeed < 5) {
           gameSpeed += 1; // Tingkatkan gameSpeed
           lastSpeedCheck = roundedScore; // Update skor terakhir yang memicu peningkatan
           // console.log(`Game speed increased to ${gameSpeed}`);
@@ -117,6 +124,7 @@ const GemaOmbak: React.FC = () => {
   };
   const checkCollision = () => {
     playersRef.current.forEach((player) => {
+      // check obstacle collision
       obstaclesRef.current.forEach((obstacle) => {
         if (
           player.x < obstacle.x + obstacle.width &&
@@ -154,18 +162,31 @@ const GemaOmbak: React.FC = () => {
   const isCollision = (obj1: { x: number, y: number, width: number, height: number }, obj2: { x: number, y: number, width: number, height: number }) => {
     return !(obj1.x + obj1.width < obj2.x || obj1.x > obj2.x + obj2.width || obj1.y + obj1.height < obj2.y || obj1.y > obj2.y + obj2.height);
   };
-  const updateParallaxSpeed = () => {
-    if(seaLayerRef.current && cloudLayerRef.current && beachLayerRef.current){//   
-      // Adjust these multipliers to get desired relative speeds
-      const seaSpeed = gameSpeed * 0.3;
-      const cloudSpeed = gameSpeed * 0.3;
-      const beachSpeed = gameSpeed * 0.3;
 
-      seaLayerRef.current.style.animationDuration = `${15 - seaSpeed}s`;
-      cloudLayerRef.current.style.animationDuration = `${10 - cloudSpeed}s`;
-      beachLayerRef.current.style.animationDuration = `${10 - beachSpeed}s`;
+  const updateParallaxSpeed = () => {
+    if (seaLayerRef.current && cloudLayerRef.current && beachLayerRef.current) {
+
+      const adjustAnimationDuration = (
+        layerRef: React.RefObject<HTMLElement>,
+        baseDuration: number
+      ) => {
+        const elements = layerRef.current?.querySelectorAll('.image-container') || [];
+        elements.forEach(el => {
+          const element = el as HTMLElement;
+          const currentDuration = parseFloat(element.style.animationDuration.replace('s', '')) || baseDuration;
+          
+          
+          const newDuration = Math.max(currentDuration - 1, (baseDuration - (gameSpeed - 5) + 1)); // Kurangi 1 tetapi pastikan minimal 1 detik
+          // element.style.animationDuration = `${newDuration}s`;
+        });
+      };
+  
+      adjustAnimationDuration(seaLayerRef, 15);
+      adjustAnimationDuration(cloudLayerRef, 10);
+      adjustAnimationDuration(beachLayerRef, 8);
     }
-  }
+  };
+  
 
   useEffect(() => {
     if (canvasRef.current) {
@@ -175,17 +196,9 @@ const GemaOmbak: React.FC = () => {
       canvas.style.width = window.innerWidth + "px";
       canvas.style.height = window.innerHeight + "px";
 
-      const resizeCanvas = () => {
-          if (canvasRef.current) {
-              const canvas = canvasRef.current;
-              canvas.width = window.innerWidth * window.devicePixelRatio;
-              canvas.height = window.innerHeight * window.devicePixelRatio;
-              canvas.style.width = window.innerWidth + "px";
-              canvas.style.height = window.innerHeight + "px";
-          }
-      };
+      backgroundRef.current = new ParallaxBackground(canvas.width, canvas.height);
 
-      const groundLevel = canvas.height * heigtcanvas;
+      const groundLevel = (canvas.height); // canvas.height * heigtcanvas
       playersRef.current = [new Player(canvasRef.current.width, canvasRef.current.height, groundLevel)];
 
       // Start game loop | update is handle player, obstacle and crew
@@ -205,17 +218,8 @@ const GemaOmbak: React.FC = () => {
             }, PRESS_HOLD_THRESHOLD);
             playersRef.current.forEach((player) => player.jump());
           }
-
-          // Start crew jump with delay
-          const playerJumpTime = Date.now(); // Get the time when player jumps
-          crewRef.current.forEach((crew) => {
-              if (!crew.isCollected) {
-                  crew.startJump(playerJumpTime); // Start the jump for each crew with a delay
-              }
-          });
         }
       };
-
       const handleKeyUp = (event: KeyboardEvent) => {
         activeKeys.current.delete(event.code);
         if (event.code === 'Space') {
@@ -227,8 +231,37 @@ const GemaOmbak: React.FC = () => {
         }
       };
 
+      const handleTouchDown = (event: TouchEvent) => {
+        if (event.touches[0].identifier) {
+          isSpacePressed = true; // Set true saat tombol Space ditekan.
+          if (!holdTimer) {
+            isHoldTriggered = false;
+            holdTimer = window.setTimeout(() => {
+              isHoldTriggered = true;
+              
+              playersRef.current.forEach((player) => player.jumpcharge());
+              holdTimer = null; // Clear timer setelah charge.
+            }, PRESS_HOLD_THRESHOLD);
+            playersRef.current.forEach((player) => player.jump());
+          }
+        }
+      };
+      const handleTouchUp = (event: TouchEvent) => {
+        if (!event.touches[0].identifier) {
+          isSpacePressed = false; // Set false saat tombol Space dilepas.
+          if (holdTimer) {
+            clearTimeout(holdTimer);
+            holdTimer = null;
+          } 
+        }
+      };
+
+
       document.addEventListener('keydown', handleKeyDown);
       document.addEventListener('keyup', handleKeyUp);
+
+      document.addEventListener('touchstart', handleTouchDown);
+      document.addEventListener('touchend', handleTouchUp);
       
 
       scheduleNextObstacle(0);
@@ -236,7 +269,6 @@ const GemaOmbak: React.FC = () => {
       const collisionInterval = setInterval(checkCollision, 100);
 
       return () => {
-        window.removeEventListener('resize', resizeCanvas)
         document.removeEventListener('keydown', handleKeyDown);
         clearInterval(collisionInterval);
       };
@@ -246,14 +278,21 @@ const GemaOmbak: React.FC = () => {
   return (
     <>
 
-      <div className="parallax">
-        <div ref={seaLayerRef} className="parallax-layer sea"></div>
-        <div ref={cloudLayerRef} className="parallax-layer cloud"></div>
-        <div ref={beachLayerRef} className="parallax-layer beach"></div>
-
-
-        <canvas ref={canvasRef} id="gameCanvas"></canvas>
-      </div>
+      {/* <div className="parallax">
+        <div ref={seaLayerRef} className="parallax-layer sea">
+          <div className="image-container"></div>
+          <div className="image-container"></div>
+        </div>
+        <div ref={cloudLayerRef} className="parallax-layer cloud">
+          <div className="image-container"></div>
+          <div className="image-container"></div>
+        </div>
+        <div ref={beachLayerRef} className="parallax-layer beach">
+          <div className="image-container"></div>
+          <div className="image-container"></div>
+        </div>
+      </div> */}
+      <canvas ref={canvasRef} id="gameCanvas"></canvas>
       <div className='label-score' > 
         Score
         <strong ref={scoreRef} id="score">0</strong>

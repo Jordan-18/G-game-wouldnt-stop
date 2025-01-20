@@ -7,7 +7,12 @@
 body {
     font-family: Arial, sans-serif;
     height: 100vh;
-    background-color: #00ff04 !important;
+    width: 100%;
+    background-image: url('../assets/FuAqmstaMAANcVG.jpeg');
+    background-size: cover; /* Ensures the image covers the entire viewport */
+    background-position: center; /* Centers the image */
+    background-repeat: no-repeat; /* Prevents the image from repeating */
+    /* background-color: #00ff04 !important; */
 }
 
 strong{
@@ -71,7 +76,7 @@ body {
 }
 
 .menu-button:hover {
-    background-color: #ffffff; /* Warna saat tombol di-hover */
+    color: #662a5d !important;
 }
 
 .content {
@@ -124,6 +129,7 @@ body {
         width: 250px;
         margin: 20px 0;
         padding: 20px;
+        font-size: 36px !important;
     }
 
     .content .title {

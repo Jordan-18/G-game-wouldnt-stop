@@ -9,6 +9,7 @@ const appService = new App();
 const Home = lazy(() => import('./pages/Home'));
 const Choose = lazy(() => import('./pages/Choose'));
 const GemaOmbak = lazy(() => import('./pages/GemaOmbak'));
+const GemaSupply = lazy(() => import('./pages/GemaSupply'));
 const Setting = lazy(() => import('./pages/Setting'));
 const Credits = lazy(() => import('./pages/Credits'));
 
@@ -23,7 +24,7 @@ const routes: RouteObject[] = [
   }},
 
   { id: 'Gema Ombak', path: '/gemaombak', element: <GemaOmbak />},
-  { id: 'Gema Supply', path: '/gemasupply', element: <GemaOmbak />},
+  { id: 'Gema Supply', path: '/gemasupply', element: <GemaSupply />},
   
   { path: '*', element: <Home />, id: '404' },
 ];
