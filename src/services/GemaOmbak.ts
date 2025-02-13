@@ -1,6 +1,6 @@
 // global variabel
-let drawheight = 540;
-let drawwidth = 613;
+let drawheight = 500;
+let drawwidth = 365;
 
 interface AnimationFrame {
   x: number;
@@ -206,9 +206,7 @@ export class Player {
       this.groundLevel = groundLevel;
       this.maxJumpStrength = maxJumpStrength;
       this.chargeDuration = 0;
-      // this.drawheight = 540;
-      // this.drawwidth = 613;
-      this.sprite = new Sprite('assets/base-model/base-model.png')
+      this.sprite = new Sprite('ombak/base-model/base-model.png')
       this.originalAspectRatio = drawwidth/drawheight;
       this.width = this.height * this.originalAspectRatio;
 
@@ -221,8 +219,8 @@ export class Player {
       //    16 * frame rate
       // )
 
-      this.sprite.addAnimation('Run', 15, 2, drawwidth, drawheight, 30);       // Third row (y=64)
-      this.sprite.addAnimation('Jump', 15, 3.1, drawwidth, drawheight, 15);    // Fourth row (y=96)
+      this.sprite.addAnimation('Run', 15, 0, drawwidth, drawheight, 30);       // Third row (y=64)
+      this.sprite.addAnimation('Jump', 15, 2.25, drawwidth, drawheight, 15);    // Fourth row (y=96)
 
       this.sprite.setAnimation('Run');
 
@@ -236,7 +234,7 @@ export class Player {
             this.yVelocity += this.gravity * (isSpacePressed ? 0.3 : 0.8); // Kurangi gravitasi saat Space ditekan.
         }
         this.y += this.yVelocity;
-        this.x += this.xVelocity;
+        this.x += this.xVelocity * 0.5;
         
 
         if (this.y >= this.groundLevel - this.height) {
@@ -367,12 +365,11 @@ export class Crew {
     this.originalAspectRatio = drawwidth/drawheight;
     this.width = this.height * this.originalAspectRatio;
 
-    this.sprite = new Sprite('assets/base-model/base-model.png')
+    this.sprite = new Sprite('ombak/base-model/base-model.png')
 
-    this.sprite.addAnimation('Idle', 15, -0.1, 613, 540, 15);   // First row (y=0)
-    // this.sprite.addAnimation('Walk', 10, 1, 613, 540, 15);      // Second row (y=32)
-    this.sprite.addAnimation('Run', 15, 2, 613, 540, 30);       // Third row (y=64)
-    this.sprite.addAnimation('Jump', 15, 3.2, 613, 540, 15);    // Fourth row (y=96)
+    this.sprite.addAnimation('Run', 15, 0, drawwidth, drawheight, 30);       // Third row (y=64)
+    this.sprite.addAnimation('Idle', 15, 1.15, drawwidth, drawheight, 15);   // First row (y=0)
+    this.sprite.addAnimation('Jump', 15, 2.3, drawwidth, drawheight, 15);    // Fourth row (y=96)
 
     this.sprite.setAnimation('Idle');
   }
@@ -481,23 +478,22 @@ export class ParallaxBackground {
       this.canvasWidth = canvasWidth;
       this.canvasHeight = canvasHeight;
 
-      // Initialize layers with different speeds
       this.layers = [
           new ParallaxLayer(
-              'assets/bg-parallax/1.2.sea.png',
-              2,
+              'ombak/bg-parallax/1.2.sea.png',
+              0.5,
               canvasWidth,
               canvasHeight
           ),
           new ParallaxLayer(
-              'assets/bg-parallax/2.cloud.png',
+              'ombak/bg-parallax/2.cloud.png',
               1,
               canvasWidth,
               canvasHeight
           ),
           new ParallaxLayer(
-              'assets/bg-parallax/beach-2.png',
-              3,
+              'ombak/bg-parallax/beach-2.png',
+              1.5,
               canvasWidth,
               canvasHeight * 0.2,
               canvasHeight * 0.8 // Position at bottom 20% of canvas

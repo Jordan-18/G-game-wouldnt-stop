@@ -4,7 +4,9 @@
     width: 200px;
     height: 200px;
     margin-right: 20px;
-    /* margin-right: 10px; */
+    position: relative;
+    text-align: center;
+    color: white;
 }
 
 .card:hover {
@@ -19,12 +21,18 @@
     color: #ffffff;
     font-family: 'good timing bd';
     text-decoration: none !important;
+    position: absolute;
+    bottom: 35px;
+    left: 16px;
 }
 
 .container p{
     color: #ffffff;
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     text-decoration: none !important;
+    position: absolute;
+    bottom: 8px;
+    left: 16px;
 }
 
 /* big landscape tablets, laptops, and desktops */ 

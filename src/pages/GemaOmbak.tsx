@@ -2,12 +2,13 @@ import React, { useRef, useEffect, useState, useCallback } from 'react';
 import { Player, Obstacle, Crew, ParallaxBackground } from '../services/GemaOmbak'
 import { getRandomInt } from '../utils/Helper';
 import '../styles/GemaOmbak.css';
+import { Link } from 'react-router-dom';
 
 const GemaOmbak: React.FC = () => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const playersRef = useRef<Player[]>([]);
   const obstaclesRef = useRef<Obstacle[]>([]);
-  let gameSpeed: number = 2;
+  let gameSpeed: number = 3;
   const baseInterval: number = 5000; // Base interval in milliseconds
   const stageIncrement: number = 500; // Reduction in interval per stage
   const PRESS_HOLD_THRESHOLD = 500;
@@ -113,7 +114,7 @@ const GemaOmbak: React.FC = () => {
         scoreRef.current!.textContent = score.toFixed(0).toString();
 
         const roundedScore = Math.floor(score);
-        if (roundedScore % 100 === 0 && roundedScore !== lastSpeedCheck && gameSpeed < 5) {
+        if (roundedScore % 100 === 0 && roundedScore !== lastSpeedCheck && gameSpeed < 15) {
           gameSpeed += 1; // Tingkatkan gameSpeed
           lastSpeedCheck = roundedScore; // Update skor terakhir yang memicu peningkatan
           // console.log(`Game speed increased to ${gameSpeed}`);
@@ -186,121 +187,174 @@ const GemaOmbak: React.FC = () => {
       adjustAnimationDuration(beachLayerRef, 8);
     }
   };
-  
+
+  const handleResize = useCallback(() => {
+      if (canvasRef.current) {
+          const canvas = canvasRef.current;
+          
+          // Set ukuran canvas sesuai ukuran window dengan mempertimbangkan device pixel ratio
+          const pixelRatio = window.devicePixelRatio || 1;
+          canvas.width = window.innerWidth * pixelRatio;
+          canvas.height = window.innerHeight * pixelRatio;
+          
+          // Set ukuran styling CSS
+          canvas.style.width = `${window.innerWidth}px`;
+          canvas.style.height = `${window.innerHeight}px`;
+          
+          // Sesuaikan context scaling
+          const ctx = canvas.getContext('2d');
+          if (ctx) {
+              ctx.scale(pixelRatio, pixelRatio);
+          }
+
+          // Reinisialisasi background jika ada
+          if (backgroundRef.current) {
+              backgroundRef.current = new ParallaxBackground(canvas.width, canvas.height);
+          }
+
+          // Update posisi player dan ground level
+          const groundLevel = canvas.height;
+          playersRef.current.forEach(player => {
+              player.groundLevel = groundLevel;
+              player.y = groundLevel - player.height;
+          });
+      }
+  }, []);
+
+  const handleKeyDown = (event: KeyboardEvent) => {
+    activeKeys.current.add(event.code);
+    if (event.code === 'Space' || event.code === 'ArrowUp') {
+      isSpacePressed = true; // Set true saat tombol Space ditekan.
+      if (!holdTimer) {
+        isHoldTriggered = false;
+        holdTimer = window.setTimeout(() => {
+          isHoldTriggered = true;
+          
+          playersRef.current.forEach((player) => player.jumpcharge());
+          holdTimer = null; // Clear timer setelah charge.
+        }, PRESS_HOLD_THRESHOLD);
+        playersRef.current.forEach((player) => player.jump());
+      }
+    }
+  };
+  const handleKeyUp = (event: KeyboardEvent) => {
+    activeKeys.current.delete(event.code);
+    if (event.code === 'Space') {
+      isSpacePressed = false; // Set false saat tombol Space dilepas.
+      if (holdTimer) {
+        clearTimeout(holdTimer);
+        holdTimer = null;
+      } 
+    }
+  };
+
+  const handleTouchDown = (event: TouchEvent) => {
+    if (event.touches[0]) {
+      isSpacePressed = true; // Set true saat tombol Space ditekan.
+      if (!holdTimer) {
+        isHoldTriggered = false;
+        holdTimer = window.setTimeout(() => {
+          isHoldTriggered = true;
+          
+          playersRef.current.forEach((player) => player.jumpcharge());
+          holdTimer = null; // Clear timer setelah charge.
+        }, PRESS_HOLD_THRESHOLD);
+        playersRef.current.forEach((player) => player.jump());
+      }
+    }
+  };
+  const handleTouchUp = (event: TouchEvent) => {
+    if (!event.touches) {
+      isSpacePressed = false; // Set false saat tombol Space dilepas.
+      if (holdTimer) {
+        clearTimeout(holdTimer);
+        holdTimer = null;
+      } 
+    }
+  };
 
   useEffect(() => {
+
     if (canvasRef.current) {
       const canvas = canvasRef.current;
       canvas.width = window.innerWidth * window.devicePixelRatio;
       canvas.height = window.innerHeight * window.devicePixelRatio;
-      canvas.style.width = window.innerWidth + "px";
-      canvas.style.height = window.innerHeight + "px";
+      canvas.style.width = (window.innerWidth * 0.8) + "px";
+      canvas.style.height = (window.innerHeight * 0.8) + "px";
+      canvas.style.marginLeft = (window.innerWidth * 0.02) + "px";
+      canvas.style.marginTop = (window.innerHeight * 0.1) + "px";
+      canvas.style.borderRadius = "10px";
 
       backgroundRef.current = new ParallaxBackground(canvas.width, canvas.height);
 
       const groundLevel = (canvas.height); // canvas.height * heigtcanvas
       playersRef.current = [new Player(canvasRef.current.width, canvasRef.current.height, groundLevel)];
-
-      // Start game loop | update is handle player, obstacle and crew
-      update();
-      
-      const handleKeyDown = (event: KeyboardEvent) => {
-        activeKeys.current.add(event.code);
-        if (event.code === 'Space') {
-          isSpacePressed = true; // Set true saat tombol Space ditekan.
-          if (!holdTimer) {
-            isHoldTriggered = false;
-            holdTimer = window.setTimeout(() => {
-              isHoldTriggered = true;
-              
-              playersRef.current.forEach((player) => player.jumpcharge());
-              holdTimer = null; // Clear timer setelah charge.
-            }, PRESS_HOLD_THRESHOLD);
-            playersRef.current.forEach((player) => player.jump());
-          }
-        }
-      };
-      const handleKeyUp = (event: KeyboardEvent) => {
-        activeKeys.current.delete(event.code);
-        if (event.code === 'Space') {
-          isSpacePressed = false; // Set false saat tombol Space dilepas.
-          if (holdTimer) {
-            clearTimeout(holdTimer);
-            holdTimer = null;
-          } 
-        }
-      };
-
-      const handleTouchDown = (event: TouchEvent) => {
-        if (event.touches[0].identifier) {
-          isSpacePressed = true; // Set true saat tombol Space ditekan.
-          if (!holdTimer) {
-            isHoldTriggered = false;
-            holdTimer = window.setTimeout(() => {
-              isHoldTriggered = true;
-              
-              playersRef.current.forEach((player) => player.jumpcharge());
-              holdTimer = null; // Clear timer setelah charge.
-            }, PRESS_HOLD_THRESHOLD);
-            playersRef.current.forEach((player) => player.jump());
-          }
-        }
-      };
-      const handleTouchUp = (event: TouchEvent) => {
-        if (!event.touches[0].identifier) {
-          isSpacePressed = false; // Set false saat tombol Space dilepas.
-          if (holdTimer) {
-            clearTimeout(holdTimer);
-            holdTimer = null;
-          } 
-        }
-      };
-
-
-      document.addEventListener('keydown', handleKeyDown);
-      document.addEventListener('keyup', handleKeyUp);
-
-      document.addEventListener('touchstart', handleTouchDown);
-      document.addEventListener('touchend', handleTouchUp);
-      
-
-      scheduleNextObstacle(0);
-      scheduleNextCrew(0);
-      const collisionInterval = setInterval(checkCollision, 100);
-
-      return () => {
-        document.removeEventListener('keydown', handleKeyDown);
-        clearInterval(collisionInterval);
-      };
     }
+    // Start game loop | update is handle player, obstacle and crew
+    update();
+
+    document.addEventListener('keydown', handleKeyDown);
+    document.addEventListener('keyup', handleKeyUp);
+
+    document.addEventListener('touchstart', handleTouchDown);
+    document.addEventListener('touchend', handleTouchUp);
+    
+
+    scheduleNextObstacle(0);
+    scheduleNextCrew(0);
+    const collisionInterval = setInterval(checkCollision, 100);
+
+    return () => {
+      document.removeEventListener('keydown', handleKeyDown);
+      clearInterval(collisionInterval);
+    };
   }, []);
 
   return (
     <>
+      <div className='container'>
+        <div className='content-game'>
+          <canvas ref={canvasRef} id="gameCanvas"></canvas>
+        </div>
 
-      {/* <div className="parallax">
-        <div ref={seaLayerRef} className="parallax-layer sea">
-          <div className="image-container"></div>
-          <div className="image-container"></div>
+        <div className='sidebar-game'>
+          <Link to='/choose'><button  className="close-button">X</button> </Link>
+          
+          <div className='label-score' > 
+            Score
+            <strong ref={scoreRef} id="score">0</strong>
+          </div>
+          
+          <div className='label-crewscore'>
+            Crew 
+            <strong ref={crewscoreRef} id="crewscore">0</strong>
+          </div>
+
+          <table className="leaderboard">
+            <thead>
+              <tr>
+                <th>Rank</th>
+                <th>Player</th>
+                <th>Scores</th>
+              </tr>
+            </thead>
+            <tbody>
+              {Array.from({ length: 5 }).map((_, index) => (
+                <React.Fragment key={index}>
+                  <tr key={index}>
+                    <td rowSpan={2}>{index + 1}</td>
+                    <td rowSpan={2}>Player {index + 1}</td>
+                    <td>{Math.floor(Math.random() * 10000)}</td>
+                  </tr>
+                  <tr>
+                    <td>{Math.floor(Math.random() * 50)}</td>
+                  </tr>
+                </React.Fragment>
+              ))}
+            </tbody>
+          </table>
+
         </div>
-        <div ref={cloudLayerRef} className="parallax-layer cloud">
-          <div className="image-container"></div>
-          <div className="image-container"></div>
-        </div>
-        <div ref={beachLayerRef} className="parallax-layer beach">
-          <div className="image-container"></div>
-          <div className="image-container"></div>
-        </div>
-      </div> */}
-      <canvas ref={canvasRef} id="gameCanvas"></canvas>
-      <div className='label-score' > 
-        Score
-        <strong ref={scoreRef} id="score">0</strong>
-      </div>
-      
-      <div className='label-crewscore'>
-        Crew 
-        <strong ref={crewscoreRef} id="crewscore">0</strong>
       </div>
     </>
   );

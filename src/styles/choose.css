@@ -1,3 +1,8 @@
+body {
+    /* background-image: url('../assets/FuAqmstaMAANcVG.jpeg') !important; */
+    background-repeat: repeat !important;
+}
+
 #mask{
     background-color: #0000008e !important;
     background-image: linear-gradient(#000000a1, #e75ed200);
@@ -7,31 +12,33 @@
 .choose{
     align-items: center !important;
     display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
     width: 100%;
     height: 100vh;
 }
 
-.card-container {
-    margin: 0 60px 0 60px;
+.swiper-button-prev{
+    display: none !important;
+    color: #ffffff !important;
+}
+
+.swiper-button-next{
+    color: #ffffff !important;
+}
+
+.swiper {
     display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+}
+  
+.swiper-slide {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: auto;
 }
 
-.close-button {
-    position: fixed;
-    top: 20px; /* Adjust the top position as needed */
-    right: 20px; /* Adjust the right position as needed */
-    z-index: 999; /* Ensure the button is on top of other elements */
-    background: none;
-    border: none;
-    font-weight: bold;
-    font-size: 40px;
-    color: #8a8484;
-}
-
-/* big landscape tablets, laptops, and desktops */ 
 @media (min-width:1025px) { 
-    
+
 }

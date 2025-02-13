@@ -8,11 +8,17 @@ body {
     font-family: Arial, sans-serif;
     height: 100vh;
     width: 100%;
-    background-image: url('../assets/FuAqmstaMAANcVG.jpeg');
+    background-image: url('../assets/FuAqmstaMAANcVG-dark.jpeg') !important;
     background-size: cover; /* Ensures the image covers the entire viewport */
     background-position: center; /* Centers the image */
-    background-repeat: no-repeat; /* Prevents the image from repeating */
+    background-repeat: no-repeat !important; /* Prevents the image from repeating */
     /* background-color: #00ff04 !important; */
+}
+
+#mask{
+    background-color: #0000008e !important;
+    background-image: linear-gradient(#000000a1, #e75ed200);
+    width: 100%;
 }
 
 strong{
@@ -100,6 +106,18 @@ body {
     font-family: 'good timing bd';
 }
 
+.close-button {
+    position: fixed;
+    top: 7px; /* Adjust the top position as needed */
+    right: 20px; /* Adjust the right position as needed */
+    z-index: 999; /* Ensure the button is on top of other elements */
+    background: none;
+    border: none;
+    font-weight: bold;
+    font-size: 24px;
+    color: #8a8484;
+}   
+
 /* smartphones, iPhone, portrait 480x320 phones */ 
 @media (min-width:320px)  { 
     .sidebar {
@@ -135,6 +153,11 @@ body {
     .content .title {
         font-size: 100px;
     }
+
+    .close-button {
+        top: 20px;
+        font-size: 40px;
+    }   
 }
 
 /* hi-res laptops and desktops */ 

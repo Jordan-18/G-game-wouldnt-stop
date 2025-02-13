@@ -2,111 +2,81 @@ body {
     font-family: Arial, sans-serif;
     height: 100vh;
     background-color: #00ff04 !important;
+    /* background-image: url('../assets/FuAqmstaMAANcVG-dark.jpeg') !important; */
+}
+
+.container {
+    display: flex;
+    width: 100%;
+    height: 100%;
+}
+  
+.content-game {
+    width: 83%;
+    position: relative;
+}
+  
+.sidebar-game {
+    width: 17%;
+    position: relative;
 }
 
 .label-score{
     position: absolute;
-    top: 15px;
+    margin-top: 20% !important;
     color: white;
     font-weight: bold;
     font-size: 20px;
     text-shadow: 2px 2px 4px rgba(0,0,0,0.7);
     pointer-events: none;
-    -webkit-text-stroke: 0.6px black;
+    -webkit-text-stroke: 0.6px #76b4ec;
     font-family: 'good timing bd';
-    left: 5%;
+    border-bottom: 4px solid #fff;
 }
 
 .label-crewscore{
     position: absolute;
-    top: 30px;
+    margin-top: 40% !important;
     color: white;
     font-weight: bold;
     font-size: 20px;
-    text-shadow: 2px 2px 4px rgba(0,0,0,0.7);
+    text-shadow: 2px 2px 4px #76b4ec;
     pointer-events: none;
     -webkit-text-stroke: 0.6px black;
     font-family: 'good timing bd';
-    left: 5%;
+    border-bottom: 4px solid #fff;
+}
+
+.leaderboard {
+    margin-top: 70% !important;
+    width: 95%;
+    max-width: 500px;
+    font-size: smaller;
+    border-collapse: collapse;
+    color: #fff;
+    position: absolute;
+    font-family: 'good timing bd';
+}
+
+.leaderboard th, .leaderboard td {
+    padding: 3px;
+    text-align: center;
+    border-bottom: 1px solid #fff;
+}
+
+.jump-button:active {
+    transform: translateY(5px);
+    box-shadow: 0 3px 0 #662a5d;
 }
 
 .label-score strong, .label-crewscore strong {
     margin-left: 15%;
 }
 
-
-/* start parallax setting */
-.parallax {
-    position: relative;
-    width: 100vw;
-    height: 100vh; /* Tinggi layar penuh */
-    overflow: hidden;
-}
-
-.parallax-layer {
-    position: absolute;
-    width: 100%;
-    height: 100%;
-    z-index: 0;
-    pointer-events: none;
-}
-
-.image-container {
-    position: absolute;
-    width: 100% !important;
-    height: 100%;
-    /* background-size: contain; */
-    background-size: 100% 100%;
-    background-repeat: no-repeat;
-    background-position: 0 0;
-    animation: slide linear infinite;
-    will-change: transform;
-}
-
-.parallax-layer .image-container:nth-child(2) {
-    left: 100%;
-    transform: scaleX(-1);
-}
-
-.sea .image-container {
-    background-image: url('../assets/bg-parallax/1.2.sea.png');
-    z-index: 1;
-    animation-duration: 5s;
-}
-
-.cloud .image-container {
-    background-image: url('../assets/bg-parallax/2.cloud.png');
-    z-index: 2;
-    animation-duration: 3s;
-}
-
-.beach .image-container {
-    background-image: url('../assets/bg-parallax/beach-2.png');
-    height: 20%;
-    z-index: 3;
-    animation-duration: 1s;
-    position: fixed; /* or absolute, depending on your needs */
-    bottom: 0;
-    left: 0;
-    width: 100%; /* ensure it spans the full width */
-}
-
 canvas {
     position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    z-index: 10;  /* Memastikan canvas selalu berada di atas layer parallax */
-}
-
-@keyframes slide {
-    from {
-      transform: translateX(0%);
-    }
-    to {
-      transform: translateX(-100%);
-    }
+    width: 1024px;
+    height: 720px;
 }
 
 #game-canvas {
@@ -114,8 +84,6 @@ canvas {
     z-index: 4;
     top: 0;
     left: 0;
-    width: 100%;
-    height: 100%;
 }
 
 /* end parallax setting */
@@ -123,12 +91,17 @@ canvas {
 /* big landscape tablets, laptops, and desktops */ 
 @media (min-width:1025px) { 
     .label-score{
-        top: 10px;
+        margin-top: 25% !important;
         font-size: 32px;
     }
 
     .label-crewscore{
-        top: 60px;
+        margin-top: 45% !important;
         font-size: 32px;
+    }
+
+    .leaderboard {
+        margin-top: 75% !important;
+        font-size: larger;
     }
 }

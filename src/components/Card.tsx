@@ -16,7 +16,7 @@ const Card: React.FC<CardProps> = ({title, description, image, to}) => {
         <img className='card-image' src={image != '' ? image : 'data:image/gif;base64,R0lGODlhAQABAIAAAMLCwgAAACH5BAAAAAAALAAAAAABAAEAAAICRAEAOw=='} />
         <div className="container">
           <h4><b>{title}</b></h4> 
-          <p>{description}</p> 
+          <p>{description}</p>
         </div>
       </Link>
     </div>
